@@ -152,7 +152,7 @@ app.get("/partido/:id", (req, res) => {
     FROM 
       Partido p
     LEFT JOIN 
-      Equipolocal el ON p.idEquipoLocal = el.idEquipoLocal
+      EquipoLocal el ON p.idEquipoLocal = el.idEquipoLocal
     LEFT JOIN 
       Equipovisitante ev ON p.idEquipoVisitante = ev.idEquipoVisitante
     WHERE 
