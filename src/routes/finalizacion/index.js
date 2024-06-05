@@ -114,4 +114,29 @@ app.put("/:id", (req, res) => {
   );
 });
 
+app.get("/partidos-no-finalizados", (req, res) => {
+  const sql = `
+    SELECT p.*
+    FROM Partidos p
+    LEFT JOIN finalizacion f ON p.idPartido = f.idPartido
+    WHERE f.idPartido IS NULL
+  `;
+
+  bd.query(sql, (error, resultados) => {
+    if (error) {
+      res.json({
+        status: false,
+        mensaje: error,
+        alerta: "No se pudieron obtener los partidos no finalizados",
+      });
+    } else {
+      res.json({
+        status: true,
+        mensaje: "Partidos no finalizados obtenidos correctamente",
+        data: resultados,
+      });
+    }
+  });
+});
+
 module.exports = app;
