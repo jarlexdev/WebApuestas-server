@@ -4,6 +4,11 @@ const bd = require("../../database/config");
 
 app.use(express.json()); // Asegúrate de poder manejar JSON en el cuerpo de las solicitudes
 
+// Función para formatear fecha a MySQL
+function formatDateToMySQL(date) {
+  return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+}
+
 // Mostrar todos los registros de la tabla finalizacion
 app.get("/", (req, res) => {
   const sql = "SELECT * FROM finalizacion";
@@ -16,9 +21,7 @@ app.get("/", (req, res) => {
         mensaje: error,
         alerta: "No se pudo obtener la información",
       });
-    }
-
-    if (resultado) {
+    } else {
       res.json({
         status: true,
         mensaje: "Datos obtenidos",
@@ -30,7 +33,10 @@ app.get("/", (req, res) => {
 
 // Insertar un nuevo registro en la tabla finalizacion
 app.post("/", (request, response) => {
-  const { idPartido, fechaFinalizacion, marcadorVisitanteFinal, marcadorLocalFinal } = request.body;
+  let { idPartido, fechaFinalizacion, marcadorVisitanteFinal, marcadorLocalFinal } = request.body;
+
+  // Formatear la fecha
+  fechaFinalizacion = formatDateToMySQL(fechaFinalizacion);
 
   const sql = "INSERT INTO finalizacion SET ?";
 
@@ -44,8 +50,7 @@ app.post("/", (request, response) => {
           mensaje: error,
           alerta: "Error al insertar",
         });
-      }
-      if (resultado) {
+      } else {
         response.json({
           status: true,
           mensaje: "Agregado correctamente",
@@ -68,9 +73,7 @@ app.delete("/:id", (req, res) => {
         mensaje: error,
         alerta: "No se pudo eliminar",
       });
-    }
-
-    if (result) {
+    } else {
       res.json({
         status: true,
         mensaje: "Eliminado completamente",
@@ -83,7 +86,10 @@ app.delete("/:id", (req, res) => {
 // Editar un registro de la tabla finalizacion
 app.put("/:id", (req, res) => {
   const id = req.params.id;
-  const { idPartido, fechaFinalizacion, marcadorVisitanteFinal, marcadorLocalFinal } = req.body;
+  let { idPartido, fechaFinalizacion, marcadorVisitanteFinal, marcadorLocalFinal } = req.body;
+
+  // Formatear la fecha
+  fechaFinalizacion = formatDateToMySQL(fechaFinalizacion);
 
   const sql = `UPDATE finalizacion SET idPartido = ?, fechaFinalizacion = ?, marcadorVisitanteFinal = ?, marcadorLocalFinal = ? WHERE idFinalizacion = ${id}`;
 
@@ -97,8 +103,7 @@ app.put("/:id", (req, res) => {
           mensaje: error,
           alerta: "No se modificaron los datos",
         });
-      }
-      if (result) {
+      } else {
         res.json({
           status: true,
           mensaje: "Datos modificados",
