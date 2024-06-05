@@ -117,7 +117,7 @@ app.put("/:id", (req, res) => {
 app.get("/partidos-no-finalizados", (req, res) => {
   const sql = `
     SELECT p.*
-    FROM Partidos p
+    FROM Partido p
     LEFT JOIN finalizacion f ON p.idPartido = f.idPartido
     WHERE f.idPartido IS NULL
   `;
